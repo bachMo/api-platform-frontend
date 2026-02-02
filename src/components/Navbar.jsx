@@ -17,7 +17,7 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { label: "API Keys", path: "/keys" },
+    { label: "Clés d'API", path: "/keys" },
     { label: "Documentation", path: "/docs" },
     { label: "Support", path: "/support" },
   ];
@@ -98,7 +98,7 @@ export default function Navbar() {
               },
             }}
           >
-            Logout
+            Déconnexion
           </Button>
         </Box>
       </Toolbar>
