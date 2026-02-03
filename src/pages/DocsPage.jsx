@@ -16,9 +16,10 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 /* ===============================
-   CONSTANTE API (UNE SEULE FOIS)
+   CONSTANTE API
 ================================ */
 const API_BASE_URL = "https://bot-agri-758105708318.europe-west1.run.app";
+const API_KEY = "sk_internal_9f3c2a8e7b4d1e6a0c9f5b2d8e7a4c1b6f0e9d3a2c8b7e5d4f1a";
 
 /* ===============================
    Code Block UX pro
@@ -123,12 +124,8 @@ function ApiSection({ title, endpoint, description, tabs }) {
           {API_BASE_URL}{endpoint}
         </Typography>
 
-        <Typography color="text.secondary">
-          {description}
-        </Typography>
-
+        <Typography color="text.secondary">{description}</Typography>
         <Divider />
-
         <ExampleTabs {...tabs} />
       </Stack>
     </Paper>
@@ -156,17 +153,17 @@ export default function DocsPage() {
           Ajoutez toujours le header <strong>x-api-key</strong> à vos requêtes.
         </Alert>
 
-        <CodeBlock>{`x-api-key: sk_xxxxxxxxxxxxxxxxx`}</CodeBlock>
+        <CodeBlock>{`x-api-key: ${API_KEY}`}</CodeBlock>
       </Stack>
 
       {/* ASR */}
       <ApiSection
         title="🎧 Transcription Audio (ASR)"
         endpoint="/model/asr"
-        description="Transcrit un fichier audio en texte Wolof."
+        description="Transcrit un fichier audio en texte Wolof. Le fichier doit être au format WAV ou MP3."
         tabs={{
           curl: `curl -X POST ${API_BASE_URL}/model/asr \\
-  -H "x-api-key: sk_xxxxx" \\
+  -H "x-api-key: ${API_KEY}" \\
   -F "audio=@audio.wav"`,
 
           js: `const fd = new FormData();
@@ -174,17 +171,19 @@ fd.append("audio", file);
 
 fetch(\`${API_BASE_URL}/model/asr\`, {
   method: "POST",
-  headers: { "x-api-key": "sk_xxxxx" },
+  headers: { "x-api-key": "${API_KEY}" },
   body: fd
 })
 .then(r => r.json())
 .then(console.log);`,
 
-          python: `requests.post(
+          python: `import requests
+r = requests.post(
   "${API_BASE_URL}/model/asr",
-  headers={"x-api-key": "sk_xxxxx"},
+  headers={"x-api-key": "${API_KEY}"},
   files={"audio": open("audio.wav","rb")}
-).json()`
+)
+print(r.json())`
         }}
       />
 
@@ -195,22 +194,24 @@ fetch(\`${API_BASE_URL}/model/asr\`, {
         description="Traduit un texte Wolof en français."
         tabs={{
           curl: `curl -X POST ${API_BASE_URL}/model/wo-fr \\
-  -H "x-api-key: sk_xxxxx" \\
+  -H "x-api-key: ${API_KEY}" \\
   -F "text=Nanga def"`,
 
           js: `fetch(\`${API_BASE_URL}/model/wo-fr\`, {
   method: "POST",
-  headers: { "x-api-key": "sk_xxxxx" },
+  headers: { "x-api-key": "${API_KEY}" },
   body: new URLSearchParams({ text: "Nanga def" })
 })
 .then(r => r.json())
 .then(console.log);`,
 
-          python: `requests.post(
+          python: `import requests
+r = requests.post(
   "${API_BASE_URL}/model/wo-fr",
-  headers={"x-api-key":"sk_xxxxx"},
+  headers={"x-api-key":"${API_KEY}"},
   data={"text":"Nanga def"}
-).json()`
+)
+print(r.json())`
         }}
       />
 
@@ -221,22 +222,24 @@ fetch(\`${API_BASE_URL}/model/asr\`, {
         description="Traduit un texte français en Wolof."
         tabs={{
           curl: `curl -X POST ${API_BASE_URL}/model/fr-wo \\
-  -H "x-api-key: sk_xxxxx" \\
+  -H "x-api-key: ${API_KEY}" \\
   -F "text=Bonjour"`,
 
           js: `fetch(\`${API_BASE_URL}/model/fr-wo\`, {
   method: "POST",
-  headers: { "x-api-key": "sk_xxxxx" },
+  headers: { "x-api-key": "${API_KEY}" },
   body: new URLSearchParams({ text: "Bonjour" })
 })
 .then(r => r.json())
 .then(console.log);`,
 
-          python: `requests.post(
+          python: `import requests
+r = requests.post(
   "${API_BASE_URL}/model/fr-wo",
-  headers={"x-api-key":"sk_xxxxx"},
+  headers={"x-api-key":"${API_KEY}"},
   data={"text":"Bonjour"}
-).json()`
+)
+print(r.json())`
         }}
       />
 
@@ -247,20 +250,21 @@ fetch(\`${API_BASE_URL}/model/asr\`, {
         description="Convertit un texte en fichier audio WAV."
         tabs={{
           curl: `curl -X POST ${API_BASE_URL}/model/tts \\
-  -H "x-api-key: sk_xxxxx" \\
+  -H "x-api-key: ${API_KEY}" \\
   -F "text=Bonjour" \\
   --output audio.wav`,
 
           js: `const res = await fetch(\`${API_BASE_URL}/model/tts\`, {
   method: "POST",
-  headers: { "x-api-key": "sk_xxxxx" },
+  headers: { "x-api-key": "${API_KEY}" },
   body: new URLSearchParams({ text: "Bonjour" })
 });
-const audio = await res.blob();`,
+const audio = await res.blob(); // Puis sauvegarder localement`,
 
-          python: `r = requests.post(
+          python: `import requests
+r = requests.post(
   "${API_BASE_URL}/model/tts",
-  headers={"x-api-key":"sk_xxxxx"},
+  headers={"x-api-key":"${API_KEY}"},
   data={"text":"Bonjour"}
 )
 open("audio.wav","wb").write(r.content)`
@@ -274,20 +278,21 @@ open("audio.wav","wb").write(r.content)`
         description="Traduit un texte français en Wolof puis génère l’audio."
         tabs={{
           curl: `curl -X POST ${API_BASE_URL}/model/fr-wo-tts \\
-  -H "x-api-key: sk_xxxxx" \\
+  -H "x-api-key: ${API_KEY}" \\
   -F "text=Bonjour" \\
   --output audio.wav`,
 
           js: `const res = await fetch(\`${API_BASE_URL}/model/fr-wo-tts\`, {
   method: "POST",
-  headers: { "x-api-key": "sk_xxxxx" },
+  headers: { "x-api-key": "${API_KEY}" },
   body: new URLSearchParams({ text: "Bonjour" })
 });
 const audio = await res.blob();`,
 
-          python: `r = requests.post(
+          python: `import requests
+r = requests.post(
   "${API_BASE_URL}/model/fr-wo-tts",
-  headers={"x-api-key":"sk_xxxxx"},
+  headers={"x-api-key":"${API_KEY}"},
   data={"text":"Bonjour"}
 )
 open("audio.wav","wb").write(r.content)`
