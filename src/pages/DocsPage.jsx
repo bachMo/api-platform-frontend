@@ -18,7 +18,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 /* ===============================
    CONSTANTE API (UNE SEULE FOIS)
 ================================ */
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "https://bot-agri-758105708318.europe-west1.run.app";
 
 /* ===============================
    Code Block UX pro
