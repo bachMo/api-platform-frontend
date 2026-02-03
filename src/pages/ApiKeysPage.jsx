@@ -39,7 +39,7 @@ export default function ApiKeysPage() {
     api.get("/platform/api-keys").then((res) => setKeys(res.data));
    // console.log('chemin du backend', process.env.REACT_APP_BACK_URL)
 
-  }, [keys]);
+  }, []);
 
   /* =======================
      Création de clé

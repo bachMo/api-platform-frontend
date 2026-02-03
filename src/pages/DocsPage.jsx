@@ -18,7 +18,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 /* ===============================
    CONSTANTE API
 ================================ */
-const API_BASE_URL = "https://bot-agri-758105708318.europe-west1.run.app";
+const API_BASE_URL = "https://api-plateforme.jokalante.com";
 const API_KEY = "sk_internal_9f3c2a8e7b4d1e6a0c9f5b2d8e7a4c1b6f0e9d3a2c8b7e5d4f1a";
 
 /* ===============================
