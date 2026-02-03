@@ -6,28 +6,84 @@ import {
   Typography,
   Paper,
   Stack,
+  Alert
 } from "@mui/material";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+
+/* ===============================
+   Helpers validation
+================================ */
+
+// Validation email simple et fiable
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+// Validation mot de passe sécurisé
+const isStrongPassword = (password) => {
+  return (
+    password.length >= 8 &&
+    /[A-Z]/.test(password) &&     // au moins une majuscule
+    /[0-9]/.test(password) &&     // au moins un chiffre
+    /[^A-Za-z0-9]/.test(password) // au moins un caractère spécial
+  );
+};
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const submit = async () => {
-    if (isLogin) {
-      const data = new URLSearchParams();
-      data.append("username", email);
-      data.append("password", password);
+    setError("");
 
-      const res = await api.post("/platform/auth/login", data);
-      localStorage.setItem("token", res.data.access_token);
-      navigate("/keys");
-    } else {
+    // ===============================
+    // LOGIN
+    // ===============================
+    if (isLogin) {
+      if (!email || !password) {
+        setError("Veuillez remplir tous les champs.");
+        return;
+      }
+
+      try {
+        const data = new URLSearchParams();
+        data.append("username", email);
+        data.append("password", password);
+
+        const res = await api.post("/platform/auth/login", data);
+        localStorage.setItem("token", res.data.access_token);
+        navigate("/keys");
+      } catch (err) {
+        setError("Email ou mot de passe incorrect.");
+      }
+      return;
+    }
+
+    // ===============================
+    // INSCRIPTION
+    // ===============================
+    if (!isValidEmail(email)) {
+      setError("Adresse email invalide.");
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      setError(
+        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial."
+      );
+      return;
+    }
+
+    try {
       await api.post("/platform/auth/register", { email, password });
       setIsLogin(true);
+      setPassword("");
+    } catch (err) {
+      setError("Impossible de créer le compte. Email déjà utilisé ?");
     }
   };
 
@@ -54,20 +110,19 @@ export default function AuthPage() {
         <Stack spacing={4}>
           {/* Header */}
           <Stack spacing={1}>
-            <Typography
-              variant="h4"
-              fontWeight={700}
-              letterSpacing={-0.5}
-            >
+            <Typography variant="h4" fontWeight={700}>
               {isLogin ? "Bienvenue 👋" : "Créer votre compte"}
             </Typography>
 
-            <Typography variant="body1" color="text.secondary">
+            <Typography color="text.secondary">
               {isLogin
                 ? "Connectez-vous pour accéder à votre espace développeur."
                 : "Rejoignez la plateforme et commencez à utiliser l’API."}
             </Typography>
           </Stack>
+
+          {/* Error */}
+          {error && <Alert severity="error">{error}</Alert>}
 
           {/* Form */}
           <Stack spacing={3}>
@@ -76,6 +131,12 @@ export default function AuthPage() {
               fullWidth
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={!isLogin && email && !isValidEmail(email)}
+              helperText={
+                !isLogin && email && !isValidEmail(email)
+                  ? "Email invalide"
+                  : ""
+              }
             />
 
             <TextField
@@ -84,6 +145,11 @@ export default function AuthPage() {
               fullWidth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              helperText={
+                !isLogin
+                  ? "8 caractères min, 1 majuscule, 1 chiffre, 1 caractère spécial"
+                  : ""
+              }
             />
 
             <Button
@@ -116,7 +182,10 @@ export default function AuthPage() {
             color="text.secondary"
             textAlign="center"
             sx={{ cursor: "pointer" }}
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setError("");
+            }}
           >
             {isLogin
               ? "Vous n’avez pas encore de compte ? Inscription"
