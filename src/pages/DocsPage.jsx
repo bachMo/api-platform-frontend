@@ -19,7 +19,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
    CONSTANTE API
 ================================ */
 const API_BASE_URL = "https://api-plateforme.jokalante.com";
-const API_KEY = "sk_internal_9f3c2a8e7b4d1e6a0c9f5b2d8e7a4c1b6f0e9d3a2c8b7e5d4f1a";
+const API_KEY = "your_api_key";
 
 /* ===============================
    Code Block UX pro
